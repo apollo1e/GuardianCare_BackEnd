@@ -7,8 +7,11 @@ const authRoutes = require("./routes/authRoutes");
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); // Allows JSON request bodies
 app.use(cors());
+
+app.use("/api/auth", authRoutes); // ROUTES ALWAYS DEFINED AFTER MIDDLEWARE OMG 6 HOURS GONE
+
 
 // Connect to MongoDB
 const MONGO_URI = process.env.MONGO_URI;
@@ -23,7 +26,6 @@ mongoose.connect(MONGO_URI, {
 }).then(() => console.log(`✅ Connected to MongoDB: ${MONGO_URI}`))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-app.use("/api/auth", authRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 3000;
