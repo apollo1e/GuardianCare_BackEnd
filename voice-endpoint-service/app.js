@@ -6,20 +6,20 @@ const { WaveFile } = require('wavefile');
 const app = express();
 app.use(bodyParser.raw({ type: '*/*', limit: '50mb' }));
 
-function convertToWav(rawData, gain = 20) {
+function convertToWav(rawData, gain = 30) {
     const wav = new WaveFile();
 
     // Create WAV from raw PCM data
     wav.fromScratch(1, // Number of channels (mono)
-        64000, // Sample rate
+        44100, // Sample rate
         '16', // Bit depth
         rawData); // Raw PCM data
 
-    // // Apply gain
-    // const samples = wav.getSamples();
-    // for (let i = 0; i < samples.length; i++) {
-    //     samples[i] = Math.max(-32768, Math.min(32767, samples[i] * gain));
-    // }
+    // Apply gain
+    const samples = wav.getSamples();
+    for (let i = 0; i < samples.length; i++) {
+        samples[i] = Math.max(-32768, Math.min(32767, samples[i] * gain));
+    }
 
     return wav.toBuffer();
 }
@@ -53,12 +53,12 @@ app.post('/end_stream', (req, res) => {
                     return res.status(500).send('Error saving WAV file');
                 }
 
-                fs.unlink('i2s.raw', (unlinkErr) => {
-                    if (unlinkErr) {
-                        console.error('Error deleting raw file:', unlinkErr);
-                    }
-                    res.send('OK');
-                });
+                // fs.unlink('i2s.raw', (unlinkErr) => {
+                //     if (unlinkErr) {
+                //         console.error('Error deleting raw file:', unlinkErr);
+                //     }
+                //     res.send('OK');
+                // });
             });
         } catch (convErr) {
             console.error('Error converting to WAV:', convErr);
