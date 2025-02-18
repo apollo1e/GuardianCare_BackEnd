@@ -1,0 +1,12 @@
+**/.DS_Store
+.vscode/
+dataset/
+**/dist
+**/node_modules
+**/__pycache__
+.venv
+**/*.tar
+**/.secrets
+**/cloudcheck-dev_accessKeys.csv
+**/secret.yaml
+**/.env
