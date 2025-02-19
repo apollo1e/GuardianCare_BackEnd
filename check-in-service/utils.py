@@ -1,7 +1,5 @@
 import numpy as np
-import os
 import wave
-import subprocess
 import json
 from llama_cpp import Llama
 from config import *
