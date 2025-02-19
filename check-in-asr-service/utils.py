@@ -16,3 +16,5 @@ def convert_raw_to_wav(raw_data, wav_file_path="./data/audio.wav", sample_rate=M
         wav_file.setsampwidth(2)  # 16-bit
         wav_file.setframerate(sample_rate)  # Sample rate
         wav_file.writeframes(audio_data.tobytes())
+        
+    return wav_file_path 

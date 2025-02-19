@@ -1,3 +1,6 @@
+# TODO: add a timeout on transcriptions to avoid blocking the server
+# TODO: use whisper.cpp to transcribe the audio, find out how to serve multiple clients at once
+
 from flask import Flask, request, Response
 from flask_cors import CORS
 import whisper
@@ -14,7 +17,8 @@ def stream():
     data = request.get_data()
     print(f"Got {len(data)} I2S bytes")
     
-    with open('./data/i2s.raw', 'ab') as f:
+    raw_file_path = './data/i2s.raw'
+    with open(raw_file_path, 'ab') as f:
         f.write(data)
     
     return 'OK'
@@ -24,13 +28,14 @@ def end_stream():
     print("End of transmission")
     
     try:
-        with open('./data/i2s.raw', 'rb') as f:
+        raw_file_path = './data/i2s.raw'
+        with open(raw_file_path, 'rb') as f:
             raw_data = f.read()
-        convert_raw_to_wav(raw_data)
-        os.remove('./data/i2s.raw')
+        wav_file_path = convert_raw_to_wav(raw_data)
+        os.remove(raw_file_path)
             
         print("Transcribing audio...")
-        large_result = asr_model.transcribe("./data/audio.wav", language="en", fp16=False)
+        large_result = asr_model.transcribe(wav_file_path, language="en", fp16=False)
         print("Transcription:")
         print(large_result["text"])
             
