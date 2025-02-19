@@ -30,7 +30,7 @@ def end_stream():
         os.remove('./data/i2s.raw')
             
         print("Transcribing audio...")
-        large_result = asr_model.transcribe("./data/audio.wav", language="en", fp16=False, verbose=True)
+        large_result = asr_model.transcribe("./data/audio.wav", language="en", fp16=False)
         print("Transcription:")
         print(large_result["text"])
             
