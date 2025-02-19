@@ -35,9 +35,15 @@ def end_stream():
         os.remove(raw_file_path)
             
         print("Transcribing audio...")
-        large_result = asr_model.transcribe(wav_file_path, language="en", fp16=False)
+        result = asr_model.transcribe(wav_file_path, language="en", fp16=False)
+        transcription = result["text"]
         print("Transcription:")
-        print(large_result["text"])
+        print(transcription)
+        
+        print("Processing transcription...")
+        json_response = process_transcription(transcription)
+        print("Response:")
+        print(json_response)
             
         return 'OK'
         
