@@ -10,15 +10,19 @@ docker run -p 8080:8080 \
   --host 0.0.0.0 \
   --port 8080
 
+curl --request POST \
+    --url http://localhost:8080/answer \
+    --header "Content-Type: application/json" \
+    --data '{"prompt": "Building a website can be done in 10 simple steps:","n_predict": 128}'
+
 ## Threading code in server
 
 ```
 if (params.n_threads_http < 1) {
-    // +2 threads for monitoring endpoints
     params.n_threads_http = std::max(params.n_parallel + 2, (int32_t) std::thread::hardware_concurrency() - 1);
 }
-log_data["n_threads_http"] = std::to_string(params.n_threads_http);
-svr->new_task_queue        = [&params] {
+
+svr->new_task_queue = [&params] {
     return new httplib::ThreadPool(params.n_threads_http);
 };
 ```

@@ -4,7 +4,7 @@ endif
 
 # Define the default target now so that it is always the first target
 BUILD_TARGETS = 
-	llama-server
+	server
 
 # Deprecation aliases
 ifdef LLAMA_CUBLAS
@@ -1046,7 +1046,7 @@ rpc-server: examples/rpc/rpc-server.cpp \
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 endif # GGML_RPC
 
-llama-server: \
+server: \
 	server/server.cpp \
 	server/utils.hpp \
 	server/httplib.h \

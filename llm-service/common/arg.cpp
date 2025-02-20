@@ -457,7 +457,7 @@ static void common_params_print_completion(common_params_context & ctx_arg) {
         "llama-retrieval",
         "llama-run",
         "llama-save-load-state",
-        "llama-server",
+        "server",
         "llama-simple",
         "llama-simple-chat",
         "llama-speculative",
