@@ -26,19 +26,14 @@ def process_transcription(transcription="I had a good with my friends today.", p
         print(f"Error reading {prompt_file_path}: {e}")
         return {"error": "Failed to read prompt file"}
 
-    # Construct full prompt
     user_prompt = f"nUser's transcription:\n\"{transcription}\""
     prompt = f"""[INST] <<SYS>>
     {system_prompt}
     <</SYS>>
     {user_prompt} [/INST]"""
 
-    # Model parameters
-    max_tokens = 100
-
     try:
-        # Run llama.cpp with the prompt
-        model = Llama(model_path=LLM_MODEL_PATH, n_ctx=2048)
+        model = Llama(model_path=LLM_MODEL_PATH, n_ctx=LLM_CONTEXT_LENGTH)
 
         # result = subprocess.run(
         #     [LLM_BIN_PATH, "-m", LLM_MODEL_PATH, "--prompt", prompt, "--n", "256"],
@@ -46,7 +41,7 @@ def process_transcription(transcription="I had a good with my friends today.", p
         #     text=True
         # )
 
-        output = model(prompt, max_tokens=max_tokens)
+        output = model(prompt, max_tokens=LLM_MAX_TOKENS)
         result = output["choices"][0]["text"].strip()
         
         print("LLM output:")
