@@ -1041,7 +1041,7 @@ clean: clean-server-assets
 GET_OBJ_FILE = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cu,%.o,$(1))))
 
 ifdef GGML_RPC
-rpc-server: examples/rpc/rpc-server.cpp \
+rpc-server: rpc/rpc-server.cpp \
 	$(OBJ_GGML)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 endif # GGML_RPC

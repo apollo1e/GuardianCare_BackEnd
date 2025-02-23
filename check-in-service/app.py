@@ -14,6 +14,5 @@ app.register_blueprint(m5stick_bp, url_prefix="/m5stick")
 app.register_blueprint(mobile_bp, url_prefix="/mobile")
 
 if __name__ == '__main__':
-    print(app.url_map)
     app.run(host=FLASK_HOST, port=FLASK_PORT,
             threaded=FLASK_THREADED, debug=FLASK_DEBUG)

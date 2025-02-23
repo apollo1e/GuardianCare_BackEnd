@@ -28,7 +28,7 @@ def end_stream():
         raw_file_path = './data/i2s.raw'
         with open(raw_file_path, 'rb') as f:
             raw_data = f.read()
-        wav_file_path = convert_raw_to_wav(raw_data)
+        wav_file_path = convert_raw_to_wav(raw_data, gain = 7)
         os.remove(raw_file_path)
             
         print("Transcribing audio...")

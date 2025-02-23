@@ -93,22 +93,22 @@ perf-*.txt
 
 # Examples
 
-examples/jeopardy/results.txt
-examples/server/*.css.hpp
-examples/server/*.html.hpp
-examples/server/*.js.hpp
-examples/server/*.mjs.hpp
-examples/server/*.gz.hpp
+jeopardy/results.txt
+server/*.css.hpp
+server/*.html.hpp
+server/*.js.hpp
+server/*.mjs.hpp
+server/*.gz.hpp
 !build_64.sh
-!examples/*.bat
-!examples/*/*.kts
-!examples/*/*/*.kts
-!examples/sycl/*.bat
-!examples/sycl/*.sh
+!*.bat
+!*/*.kts
+!*/*/*.kts
+!sycl/*.bat
+!sycl/*.sh
 
 # Server Web UI temporary files
 node_modules
-examples/server/webui/dist
+server/webui/dist
 
 # Python
 
