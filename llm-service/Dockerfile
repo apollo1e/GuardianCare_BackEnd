@@ -7,7 +7,20 @@ ARG TARGETARCH
 ARG GGML_CPU_ARM_ARCH=armv8-a
 
 RUN apt-get update && \
-    apt-get install -y build-essential git cmake libcurl4-openssl-dev
+    apt-get install -y build-essential git cmake libcurl4-openssl-dev libssl-dev
+
+# RUN apt-get install libssl-dev
+# RUN apt-get install openssl
+
+WORKDIR /app/deps
+
+RUN git clone https://github.com/Thalhammer/jwt-cpp.git
+
+WORKDIR /app/deps/jwt-cpp
+
+RUN cmake .
+RUN cmake --build .
+RUN cmake --install .
 
 WORKDIR /app
 
