@@ -7,7 +7,21 @@ ARG TARGETARCH
 ARG GGML_CPU_ARM_ARCH=armv8-a
 
 RUN apt-get update && \
+<<<<<<< Updated upstream
     apt-get install -y build-essential git cmake libcurl4-openssl-dev
+=======
+    apt-get install -y build-essential git cmake libcurl4-openssl-dev libssl-dev
+
+WORKDIR /app/deps
+
+RUN git clone https://github.com/Thalhammer/jwt-cpp.git
+
+WORKDIR /app/deps/jwt-cpp
+
+RUN cmake .
+RUN cmake --build .
+RUN cmake --install .
+>>>>>>> Stashed changes
 
 WORKDIR /app
 
@@ -53,4 +67,8 @@ WORKDIR /app
 
 HEALTHCHECK CMD [ "curl", "-f", "http://localhost:8080/health" ]
 
+<<<<<<< Updated upstream
 ENTRYPOINT [ "/app/llama-server" ]
+=======
+ENTRYPOINT [ "/app/server" ]
+>>>>>>> Stashed changes
