@@ -1,12 +1,24 @@
-**/.DS_Store
+# Environment variables
+.env
+services/**/.env
+
+# Dependencies
+node_modules/
+services/**/node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# IDE
 .vscode/
-dataset/
-**/dist
-**/node_modules
-**/__pycache__
-.venv
-**/*.tar
-**/.secrets
-**/cloudcheck-dev_accessKeys.csv
-**/secret.yaml
-**/.env
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: 
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+    environment:
+      - NODE_ENV=development
+      - PORT=${AUTH_SERVICE_PORT}
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - ALLOWED_SERVICE_API_KEYS=${SERVICE_API_KEY}
+    depends_on:
+      - mongodb
+
+  elderly-service:
+    build:
+      context: ./services/elderly-management-service
+      dockerfile: Dockerfile
+    ports:
+      - "${ELDERLY_SERVICE_PORT}:${ELDERLY_SERVICE_PORT}"
+    environment:
+      - NODE_ENV=development
+      - PORT=${ELDERLY_SERVICE_PORT}
+      - AUTH_SERVICE_URL=http://auth-service:${AUTH_SERVICE_PORT}
+      - AUTH_SERVICE_API_KEY=${SERVICE_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - auth-service
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
