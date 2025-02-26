@@ -17,6 +17,20 @@ exports.getUserById = async (req, res) => {
 };
 
 /**
+ * Update user - Internal Service API
+ * @route PUT /api/users/:userId
+ */
+exports.updateUser = async (req, res) => {
+    try {
+        const updatedUser = await userService.updateUser(req.params.userId, req.body);
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+
+/**
  * Get users by type - Internal Service API
  * @route GET /api/users/type/:userType
  */

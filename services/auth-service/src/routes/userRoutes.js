@@ -14,6 +14,13 @@ router.use(serviceAuth);
 router.get('/:userId', userController.getUserById);
 
 /**
+ * @route   PUT /api/users/:userId
+ * @desc    Update user data
+ * @access  Internal Service API
+ */
+router.put('/:userId', userController.updateUser);
+
+/**
  * @route   GET /api/users/type/:userType
  * @desc    Get users by type (Internal Service API)
  * @access  Service

@@ -3,17 +3,9 @@ const axios = require('axios');
 class AuthServiceClient {
     constructor() {
         this.baseURL = process.env.AUTH_SERVICE_URL || 'http://localhost:3000';
-        this.apiKey = process.env.AUTH_SERVICE_API_KEY;
-
-        if (!this.apiKey) {
-            throw new Error('AUTH_SERVICE_API_KEY is required');
-        }
-
+        
         this.client = axios.create({
-            baseURL: this.baseURL,
-            headers: {
-                'X-Service-API-Key': this.apiKey
-            }
+            baseURL: this.baseURL
         });
     }
 
@@ -67,6 +59,19 @@ class AuthServiceClient {
             throw new Error(`Error fetching elderly users: ${error.message}`);
         }
     }
+
+    /**
+     * Update user details
+     */
+    async updateUser(userId, updateData) {
+        try {
+            const response = await this.client.put(`/api/users/${userId}`, updateData);
+            return response.data;
+        } catch (error) {
+            throw new Error(`Error updating user: ${error.response?.data?.message || error.message}`);
+        }
+    }
+    
 }
 
 // Export singleton instance

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  user_type: { type: String, enum: ["elderly", "caretaker"], required: true }, // ✅ Fix: Renamed from role -> user_type
+  user_type: { type: String, enum: ["elderly", "caretaker"], required: true }, 
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   password_hash: { type: String, required: true },
