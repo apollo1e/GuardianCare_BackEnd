@@ -13,7 +13,7 @@ docker run -p 8080:8080 \
 curl --request POST \
     --url http://localhost:8080/answer \
     --header "Content-Type: application/json" \
-    --data '{"prompt": "Building a website can be done in 10 simple steps:","n_predict": 128}'
+    --data '{"prompt": "Building a website can be done in 10 simple steps:","n_predict": 128,"callback": "http://127.0.0.1:3000/llm/receive"}'
 
 ## Threading code in server
 

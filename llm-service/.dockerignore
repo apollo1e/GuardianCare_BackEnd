@@ -8,8 +8,10 @@
 .vscode/
 .DS_Store
 
-build*/
-
+deps/*
+build/*
+full/*
+lib/*
 models/*
 
 /llama-cli
