@@ -330,19 +330,6 @@ nlohmann-json/fast:
 	$(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/nlohmann-json.dir/build.make example/traits/CMakeFiles/nlohmann-json.dir/build
 .PHONY : nlohmann-json/fast
 
-#=============================================================================
-# Target rules for targets named kazuho-picojson
-
-# Build rule for target.
-kazuho-picojson: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kazuho-picojson
-.PHONY : kazuho-picojson
-
-# fast build rule for target.
-kazuho-picojson/fast:
-	$(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/kazuho-picojson.dir/build.make example/traits/CMakeFiles/kazuho-picojson.dir/build
-.PHONY : kazuho-picojson/fast
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -362,7 +349,6 @@ help:
 	@echo "... rsa-verify-run"
 	@echo "... es256k"
 	@echo "... jwks-verify"
-	@echo "... kazuho-picojson"
 	@echo "... nlohmann-json"
 	@echo "... partial-claim-verifier"
 	@echo "... print-claims"

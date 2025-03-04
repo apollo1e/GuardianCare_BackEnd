@@ -175,44 +175,6 @@ nlohmann-json/fast:
 	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/nlohmann-json.dir/build.make example/traits/CMakeFiles/nlohmann-json.dir/build
 .PHONY : nlohmann-json/fast
 
-# Convenience name for target.
-example/traits/CMakeFiles/kazuho-picojson.dir/rule:
-	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 example/traits/CMakeFiles/kazuho-picojson.dir/rule
-.PHONY : example/traits/CMakeFiles/kazuho-picojson.dir/rule
-
-# Convenience name for target.
-kazuho-picojson: example/traits/CMakeFiles/kazuho-picojson.dir/rule
-.PHONY : kazuho-picojson
-
-# fast build rule for target.
-kazuho-picojson/fast:
-	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/kazuho-picojson.dir/build.make example/traits/CMakeFiles/kazuho-picojson.dir/build
-.PHONY : kazuho-picojson/fast
-
-kazuho-picojson.o: kazuho-picojson.cpp.o
-.PHONY : kazuho-picojson.o
-
-# target to build an object file
-kazuho-picojson.cpp.o:
-	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/kazuho-picojson.dir/build.make example/traits/CMakeFiles/kazuho-picojson.dir/kazuho-picojson.cpp.o
-.PHONY : kazuho-picojson.cpp.o
-
-kazuho-picojson.i: kazuho-picojson.cpp.i
-.PHONY : kazuho-picojson.i
-
-# target to preprocess a source file
-kazuho-picojson.cpp.i:
-	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/kazuho-picojson.dir/build.make example/traits/CMakeFiles/kazuho-picojson.dir/kazuho-picojson.cpp.i
-.PHONY : kazuho-picojson.cpp.i
-
-kazuho-picojson.s: kazuho-picojson.cpp.s
-.PHONY : kazuho-picojson.s
-
-# target to generate assembly for a file
-kazuho-picojson.cpp.s:
-	cd /Users/vignesh/Developer/SIT/Y2T2/GuardianCare/GuardianCare_BackEnd/llm-service/deps/jwt-cpp && $(MAKE) $(MAKESILENT) -f example/traits/CMakeFiles/kazuho-picojson.dir/build.make example/traits/CMakeFiles/kazuho-picojson.dir/kazuho-picojson.cpp.s
-.PHONY : kazuho-picojson.cpp.s
-
 nlohmann-json.o: nlohmann-json.cpp.o
 .PHONY : nlohmann-json.o
 
@@ -249,11 +211,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... kazuho-picojson"
 	@echo "... nlohmann-json"
-	@echo "... kazuho-picojson.o"
-	@echo "... kazuho-picojson.i"
-	@echo "... kazuho-picojson.s"
 	@echo "... nlohmann-json.o"
 	@echo "... nlohmann-json.i"
 	@echo "... nlohmann-json.s"
