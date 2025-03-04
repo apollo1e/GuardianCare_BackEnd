@@ -3864,31 +3864,6 @@ int main(int argc, char **argv)
         res.status = 200;
     };
 
-    auto res_accepted = [](httplib::Response &res)
-    {
-        res.set_content("Accepted. Processing asynchronously.", "text/plain");
-        res.status = 202;
-    };
-
-    auto res_callback = [](const json &data, const httplib::Request &req)
-    {
-        if (req.contains("callback"))
-        {
-            const auto &callback = req.at("callback");
-            size_t pos = callback.find('/', 8); // Find first `/` after "http://"
-            std::string base_url = (pos != std::string::npos) ? callback.substr(0, pos) : callback;
-            std::string endpoint = (pos != std::string::npos) ? callback.substr(pos) : "/";
-            httplib::Client client(base_url);
-
-            httplib::Headers headers = {
-                {"Content-Type", "application/json"},
-                {"Authorization", req.get_header_value("Authorization")}};
-            };
-            
-            auto res = client.Post(endpoint, headers, safe_json_to_str(data), MIMETYPE_JSON);
-        }
-    };
-
     svr->set_exception_handler(
         [&res_error](const httplib::Request &, httplib::Response &res, const std::exception_ptr &ep)
         {
