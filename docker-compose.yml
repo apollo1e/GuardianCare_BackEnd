@@ -1,24 +1,28 @@
 version: '3.8'
 
 services:
-  api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+  envoy:
+    image: envoyproxy/envoy:v1.27.0
     ports:
-      - "${API_GATEWAY_PORT:-8000}:${API_GATEWAY_PORT:-8000}"
+      - "${API_GATEWAY_PORT:-8000}:8000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml:ro
     environment:
-      - NODE_ENV=development
-      - API_GATEWAY_PORT=${API_GATEWAY_PORT:-8000}
-      - AUTH_SERVICE_URL=http://auth-service:${AUTH_SERVICE_PORT}
-      - ELDERLY_SERVICE_URL=http://elderly-service:${ELDERLY_SERVICE_PORT}
-      - CHECK_IN_SERVICE_URL=http://check-in-service:${CHECK_IN_SERVICE_PORT:-5000}
-      - ASR_SERVICE_URL=http://asr-service:${ASR_SERVICE_PORT:-5001}
-      - LLM_SERVICE_URL=http://llm-service:${LLM_SERVICE_PORT:-5002}
       - JWT_SECRET=${JWT_SECRET}
+    command:
+      - envoy
+      - -c
+      - /etc/envoy/envoy.yaml
+      - --service-cluster
+      - envoy-proxy
+      - --service-node
+      - envoy-proxy
+      - -l
+      - debug
     depends_on:
       - auth-service
       - elderly-service
+
   auth-service:
     build: 
       context: ./services/auth-service
