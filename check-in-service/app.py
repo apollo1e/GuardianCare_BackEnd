@@ -5,6 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 from blueprints.m5stick import m5stick_bp
 from blueprints.mobile import mobile_bp
+from blueprints.llm import llm_bp
 from config import *
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ CORS(app)
 
 app.register_blueprint(m5stick_bp, url_prefix="/m5stick")
 app.register_blueprint(mobile_bp, url_prefix="/mobile")
+app.register_blueprint(llm_bp, url_prefix="/llm")
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT,

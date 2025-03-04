@@ -3864,6 +3864,28 @@ int main(int argc, char **argv)
         res.status = 200;
     };
 
+    auto res_accepted = [](httplib::Response &res)
+    {
+        res.set_content("Accepted. Processing asynchronously.", "text/plain");
+        res.status = 202;
+    };
+
+    auto res_callback = [](const json &data, const std::string &callback_url, const std::string &auth_header)
+    {
+        size_t pos = callback_url.find('/', callback_url.find("://") + 3);
+        std::string base_url = (pos != std::string::npos) ? callback_url.substr(0, pos) : callback_url;
+        std::string endpoint = (pos != std::string::npos) ? callback_url.substr(pos + 1) : "";
+        httplib::Client client(base_url);
+        httplib::Headers headers = {{"Content-Type", "application/json"}};
+        if (auth_header != "")
+        {
+            headers.emplace("Authorization", auth_header);
+        }
+
+        auto res = client.Post(("/" + endpoint).c_str(), headers, safe_json_to_str(data), "application/json");
+        SRV_ERR("Sent POST request to endpoint: '%s'\n", endpoint.c_str());
+    };
+
     svr->set_exception_handler(
         [&res_error](const httplib::Request &, httplib::Response &res, const std::exception_ptr &ep)
         {
@@ -4341,10 +4363,10 @@ int main(int argc, char **argv)
 
     // handle completion-like requests (completion, chat, infill)
     // we can optionally provide a custom format for partial results and final results
-    const auto handle_answer_impl = [&ctx_server, &res_error, &res_ok](server_task_type type, json &data,
-                                                                       std::function<bool()> is_connection_closed,
-                                                                       httplib::Response &res,
-                                                                       oaicompat_type oaicompat)
+    const auto handle_answer_impl = [&ctx_server, &res_error, &res_ok, &res_accepted, &res_callback](server_task_type type, json &data,
+                                                                                                     const httplib::Request &req,
+                                                                                                     httplib::Response &res,
+                                                                                                     oaicompat_type oaicompat)
     {
         GGML_ASSERT(type == SERVER_TASK_TYPE_COMPLETION || type == SERVER_TASK_TYPE_INFILL);
 
@@ -4396,36 +4418,56 @@ int main(int argc, char **argv)
         ctx_server.queue_tasks.post(tasks);
 
         bool stream = json_value(data, "stream", false);
+        bool callback = data.contains("callback");
         const auto task_ids = server_task::get_list_id(tasks);
 
-        if (!stream)
+        if (callback)
         {
-            ctx_server.receive_multi_results(
-                task_ids,
-                [&](std::vector<server_task_result_ptr> &results)
-                {
-                    if (results.size() == 1)
-                    {
-                        // single result
-                        res_ok(res, results[0]->to_json());
-                    }
-                    else
-                    {
-                        // multiple results (multitask)
-                        json arr = json::array();
-                        for (auto &res : results)
-                        {
-                            arr.push_back(res->to_json());
-                        }
-                        res_ok(res, arr);
-                    }
-                },
-                [&](const json &error_data)
-                { res_error(res, error_data); }, is_connection_closed);
+            res_accepted(res);
+            auto callback_url = data["callback"].get<std::string>();
+            auto auth_header = req.get_header_value("Authorization");
 
-            ctx_server.queue_results.remove_waiting_task_ids(task_ids);
+            std::thread([task_ids, &ctx_server, &req, &res_callback, callback_url, auth_header]()
+                        {
+                std::vector<server_task_result_ptr> results;
+                bool error_occurred = false;
+                json error_data;
+
+                ctx_server.receive_multi_results(
+                    task_ids,
+                    [&](std::vector<server_task_result_ptr> &res_results)
+                    {
+                        results = std::move(res_results);
+                    },
+                    [&](const json &err_data)
+                    { 
+                        error_occurred = true;
+                        error_data = err_data;
+                    },
+                    []() { return false; }); // Never consider connection closed for async processing
+
+                ctx_server.queue_results.remove_waiting_task_ids(task_ids);
+
+                // Send results to callback URL
+                if (!error_occurred) {
+                    json response_data;
+                    if (results.size() == 1) {
+                        // single result
+                        response_data = results[0]->to_json();
+                    } else {
+                        // multiple results (multitask)
+                        response_data = json::array();
+                        for (auto &res : results) {
+                            response_data.push_back(res->to_json());
+                        }
+                    }
+                    res_callback(response_data, callback_url, auth_header);
+                } else {
+                    res_callback(error_data, callback_url, auth_header);
+                } })
+                .detach();
         }
-        else
+        else if (stream)
         {
             const auto chunked_content_provider = [task_ids, &ctx_server, oaicompat](size_t, httplib::DataSink &sink)
             {
@@ -4474,12 +4516,46 @@ int main(int argc, char **argv)
 
             res.set_chunked_content_provider("text/event-stream", chunked_content_provider, on_complete);
         }
+        else
+        {
+            ctx_server.receive_multi_results(
+                task_ids,
+                [&](std::vector<server_task_result_ptr> &results)
+                {
+                    if (results.size() == 1)
+                    {
+                        // single result
+                        res_ok(res, results[0]->to_json());
+                    }
+                    else
+                    {
+                        // multiple results (multitask)
+                        json arr = json::array();
+                        for (auto &res : results)
+                        {
+                            arr.push_back(res->to_json());
+                        }
+                        res_ok(res, arr);
+                    }
+                },
+                [&](const json &error_data)
+                { res_error(res, error_data); }, req.is_connection_closed);
+
+            ctx_server.queue_results.remove_waiting_task_ids(task_ids);
+        }
     };
 
     const auto handle_answer = [&handle_answer_impl](const httplib::Request &req, httplib::Response &res)
     {
         json data = json::parse(req.body);
-        return handle_answer_impl(SERVER_TASK_TYPE_COMPLETION, data, req.is_connection_closed, res,
+        return handle_answer_impl(SERVER_TASK_TYPE_COMPLETION, data, req, res,
+                                  OAICOMPAT_TYPE_NONE);
+    };
+
+    const auto handle_answer_callback = [&handle_answer_impl](const httplib::Request &req, httplib::Response &res)
+    {
+        json data = json::parse(req.body);
+        return handle_answer_impl(SERVER_TASK_TYPE_COMPLETION, data, req, res,
                                   OAICOMPAT_TYPE_NONE);
     };
 
@@ -4499,7 +4575,7 @@ int main(int argc, char **argv)
         json data = oaicompat_completion_params_parse(body, params.use_jinja, params.reasoning_format,
                                                       ctx_server.chat_templates.get());
 
-        return handle_answer_impl(SERVER_TASK_TYPE_COMPLETION, data, req.is_connection_closed, res,
+        return handle_answer_impl(SERVER_TASK_TYPE_COMPLETION, data, req, res,
                                   OAICOMPAT_TYPE_CHAT);
     };
 
@@ -4913,6 +4989,7 @@ int main(int argc, char **argv)
     svr->Get("/health", handle_health); // public endpoint (no API key check)
     svr->Get("/metrics", handle_metrics);
     svr->Post("/answer", handle_answer);
+    svr->Post("/answer/callback", handle_answer_callback);
     svr->Post("/chat/answer", handle_chat_answer);
     // svr->Post("/infill", handle_infill);
     // svr->Post("/embeddings", handle_embeddings);

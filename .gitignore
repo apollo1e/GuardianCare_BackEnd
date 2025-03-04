@@ -10,3 +10,9 @@ dataset/
 **/cloudcheck-dev_accessKeys.csv
 **/secret.yaml
 **/.env
+**/_deps/**
+**/CMakeFiles/**
+**/tests/**
+**/full/**
+**/build/**
+**/lib/**

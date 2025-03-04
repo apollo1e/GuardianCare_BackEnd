@@ -64,6 +64,8 @@ llama-batched-swift
 out/
 tmp/
 autogen-*.md
+**/_deps/
+**/CMakeFiles/
 
 # CI
 
