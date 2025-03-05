@@ -51,3 +51,21 @@ exports.getProfile = async (req, res) => {
            .json({ message: error.message || 'Error fetching profile' });
     }
 };
+
+/**
+ * Update current user profile
+ * @route PUT /api/auth/profile
+ */
+exports.updateProfile = async (req, res) => {
+    try {
+        const updatedUser = await authService.updateUserProfile(req.user.userId, req.body);
+        res.json({
+            message: 'Profile updated successfully',
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(error.message === 'User not found' ? 404 : 400)
+           .json({ message: error.message || 'Error updating profile' });
+    }
+};

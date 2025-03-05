@@ -68,6 +68,35 @@ class AuthService {
         }
         return user;
     }
+    
+    /**
+     * Update user profile
+     */
+    async updateUserProfile(userId, updateData) {
+        // Fields that are allowed to be updated from Android app
+        const allowedUpdates = ['name', 'dob', 'medical_history'];
+        
+        // Filter out any fields that are not allowed to be updated
+        const updates = {};
+        Object.keys(updateData).forEach(key => {
+            if (allowedUpdates.includes(key)) {
+                updates[key] = updateData[key];
+            }
+        });
+        
+        // Update user
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $set: updates },
+            { new: true, runValidators: true }
+        ).select('-password_hash');
+        
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        return user;
+    }
 
     /**
      * Generate JWT token
